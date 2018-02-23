@@ -13,11 +13,15 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-    GUI/mainwindow.cpp
+    GUI/mainwindow.cpp \
+    TAD/tadobjeto.cpp \
+    TAD/tadperro.cpp
 
 HEADERS  += \
     GUI/mainwindow.h \
     DoubleList/doublenode.h \
-    DoubleList/doublelist.h
+    DoubleList/doublelist.h \
+    TAD/tadobjeto.h \
+    TAD/tadperro.h
 
 FORMS    += GUI/mainwindow.ui
