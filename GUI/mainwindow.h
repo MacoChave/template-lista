@@ -3,8 +3,7 @@
 
 #include <QMainWindow>
 #include "DoubleList/doublelist.h"
-#include "TAD/tadobjeto.h"
-#include "TAD/tadperro.h"
+#include "TAD/tadrow.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,8 +26,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    DoubleList<TADObjeto *> * lista;
-    DoubleList<TADPerro *> *perros;
+    List<TADRow *> *rows;
 };
 
 #endif // MAINWINDOW_H

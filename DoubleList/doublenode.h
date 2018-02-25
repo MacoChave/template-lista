@@ -3,21 +3,21 @@
 #include <QString>
 
 template <typename T>
-class DoubleNode
+class NodeList
 {
     T data;
-    DoubleNode<T> *next;
-    DoubleNode<T> *preview;
+    NodeList<T> *next;
+    NodeList<T> *preview;
 public:
-    DoubleNode();
-    DoubleNode(T value);
-    ~DoubleNode();
+    NodeList();
+    NodeList(T value);
+    ~NodeList();
     T getData();
     void setData(T value);
-    DoubleNode<T> *getNext();
-    void setNext(DoubleNode<T> *value);
-    DoubleNode<T> *getPreview();
-    void setPreview(DoubleNode<T> *value);
+    NodeList<T> *getNext();
+    void setNext(NodeList<T> *value);
+    NodeList<T> *getPreview();
+    void setPreview(NodeList<T> *value);
 
     QString getNameNode();
     QString getTextNode();
@@ -26,7 +26,7 @@ public:
 #endif // DOUBLENODE_H
 
 template <typename T>
-DoubleNode<T>::DoubleNode()
+NodeList<T>::NodeList()
 {
     data = 0;
     next = 0;
@@ -34,7 +34,7 @@ DoubleNode<T>::DoubleNode()
 }
 
 template <typename T>
-DoubleNode<T>::DoubleNode(T value)
+NodeList<T>::NodeList(T value)
 {
     data = value;
     next = 0;
@@ -42,7 +42,7 @@ DoubleNode<T>::DoubleNode(T value)
 }
 
 template <typename T>
-DoubleNode<T>::~DoubleNode()
+NodeList<T>::~NodeList()
 {
     if (data != 0)
         delete data;
@@ -52,49 +52,49 @@ DoubleNode<T>::~DoubleNode()
 }
 
 template <typename T>
-T DoubleNode<T>::getData()
+T NodeList<T>::getData()
 {
     return data;
 }
 
 template <typename T>
-void DoubleNode<T>::setData(T value)
+void NodeList<T>::setData(T value)
 {
     data = value;
 }
 
 template <typename T>
-DoubleNode<T> *DoubleNode<T>::getNext()
+NodeList<T> *NodeList<T>::getNext()
 {
     return next;
 }
 
 template <typename T>
-void DoubleNode<T>::setNext(DoubleNode<T> *value)
+void NodeList<T>::setNext(NodeList<T> *value)
 {
     next = value;
 }
 
 template <typename T>
-DoubleNode<T> *DoubleNode<T>::getPreview()
+NodeList<T> *NodeList<T>::getPreview()
 {
     return preview;
 }
 
 template <typename T>
-void DoubleNode<T>::setPreview(DoubleNode<T> *value)
+void NodeList<T>::setPreview(NodeList<T> *value)
 {
     preview = value;
 }
 
 template <typename T>
-QString DoubleNode<T>::getNameNode()
+QString NodeList<T>::getNameNode()
 {
     return data->getNodeName();
 }
 
 template <typename T>
-QString DoubleNode<T>::getTextNode()
+QString NodeList<T>::getTextNode()
 {
     return data->toString();
 }

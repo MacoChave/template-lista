@@ -85,7 +85,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="edt_main_edt">
+           <widget class="QLineEdit" name="edt_main_nombre">
             <property name="minimumSize">
              <size>
               <width>209</width>

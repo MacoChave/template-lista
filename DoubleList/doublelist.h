@@ -5,161 +5,397 @@
 #include "doublenode.h"
 
 template <typename T>
-class DoubleList
+class List
 {
     int count;
-    DoubleNode<T> *first;
-    DoubleNode<T> *last;
-public:
-    DoubleList();
-    ~DoubleList();
+    NodeList<T> *head;
+    NodeList<T> *tail;
 
-    T front();
-    T back();
-    void push_front(T data);
-    void push_back(T data);
+    void insert(NodeList<T> *current, T value);
+    NodeList<T> *get(NodeList<T> *current, T value);
+public:
+    List();
+    List(List<T> *value);
+    ~List();
+
+    /* CAPACIDAD */
+    bool isEmpty();
+    int size();
+    void clear();
+
+    /* MODIFICADORES */
+    void push_front(T value);
+    void push_back(T value);
     void pop_front();
     void pop_back();
-    void clear();
+    void insert(T value);
+    void erase(T value);
+    NodeList<T> *removeFirst();
+    NodeList<T> *removeLast();
+    NodeList<T> *removeOne(T value);
+
+    /* OPERATIONS */
+    NodeList<T> *first();
+    NodeList<T> *last();
+    T front();
+    T back();
+    NodeList<T> *get(T value);
+    bool startsWith(T value);
+    bool endsWith(T value);
+    void sort();
+    void reverse();
+
+    /* REPORTES */
     void graph(QString filename);
+
+    /* SOBRECARGA DE OPERADORES */
+    List<T> operator<<(T value);
 };
 
 #endif // DOUBLELIST_H
 
 template <typename T>
-DoubleList<T>::DoubleList()
+void List<T>::insert(NodeList<T> *current, T value)
 {
-    count = 0;
-    first = 0;
-    last = 0;
+    int compare = current->getData()->compare(value);
+
+    if (compare == 0)
+        return;
+    else
+    {
+        if (compare > 0)
+        {
+            NodeList<T> *temporal = new NodeList<T>(value);
+            temporal->setNext(current);
+            temporal->setPreview(current->getPreview());
+            current->getPreview()->setNext(temporal);
+            current->setPreview(temporal);
+        }
+        else
+            insert(current->getNext(), value);
+    }
 }
 
 template <typename T>
-DoubleList<T>::~DoubleList()
+NodeList<T> *List<T>::get(NodeList<T> *current, T value)
+{
+    if (current == NULL)
+        return NULL;
+
+    int compare = current->getData()->compare(value);
+
+    if (compare == 0)
+        return current;
+    else
+    {
+        if (compare < 0)
+            return get(current->getNext(), value);
+        else
+            return NULL;
+    }
+}
+
+template <typename T>
+List<T>::List()
 {
     count = 0;
+    head = 0;
+    tail = 0;
+}
+
+template <typename T>
+List<T>::List(List<T> *value)
+{
+    head = value->front();
+    tail = value->back();
+    count = value->size();
+
+    value = NULL;
+}
+
+template <typename T>
+List<T>::~List()
+{
     clear();
 }
 
 template <typename T>
-T DoubleList<T>::front()
+NodeList<T> *List<T>::first()
 {
-    return first;
+    return head;
 }
 
 template <typename T>
-T DoubleList<T>::back()
+NodeList<T> *List<T>::last()
 {
-    return last;
+    return tail;
 }
 
 template <typename T>
-void DoubleList<T>::push_front(T data)
+T List<T>::front()
 {
-    DoubleNode<T> *node = new DoubleNode<T>(data);
+    return isEmpty() ? NULL : head->getData();
+}
 
-    if (count == 0)
-        first = last = node;
+template <typename T>
+T List<T>::back()
+{
+    return isEmpty() ? NULL: tail->getData();
+}
+
+template <typename T>
+NodeList<T> *List<T>::get(T value)
+{
+    if (isEmpty())
+        return NULL;
+
+    if (startsWith(value))
+        return first();
+    if (endsWith(value))
+        return last();
+
+    if (head->getData()->compare(value) < 0
+            && tail->getData()->compare(value) > 0)
+        return get(head->next, value);
+    else
+        return NULL;
+}
+
+template <typename T>
+bool List<T>::startsWith(T value)
+{
+    if (isEmpty())
+        return false;
+
+    return (value->compare(head->getData()) == 0) ? true: false;
+}
+
+template <typename T>
+bool List<T>::endsWith(T value)
+{
+    if (isEmpty())
+        return false;
+
+    return (value->compare(tail->getData()) == 0) ? true : false;
+}
+
+template <typename T>
+bool List<T>::isEmpty()
+{
+    return head == NULL;
+}
+
+template <typename T>
+int List<T>::size()
+{
+    return count;
+}
+
+template <typename T>
+void List<T>::clear()
+{
+    while (!isEmpty())
+        pop_front();
+}
+
+template <typename T>
+void List<T>::push_front(T value)
+{
+    NodeList<T> *node = new NodeList<T>(value);
+
+    if (isEmpty())
+        head = tail = node;
     else
     {
-        node->setNext(first);
-        first->setPreview(node);
-        first = node;
+        node->setNext(head);
+        head->setPreview(node);
+        head = node;
     }
     count++;
 }
 
 template <typename T>
-void DoubleList<T>::push_back(T data)
+void List<T>::push_back(T value)
 {
-    DoubleNode<T> *node = new DoubleNode<T>(data);
+    NodeList<T> *node = new NodeList<T>(value);
 
-    if (count == 0)
-        first = last = node;
+    if (isEmpty())
+        head = tail = node;
     else
     {
-        last->setNext(node);
-        node->setPreview(last);
-        last = node;
+        tail->setNext(node);
+        node->setPreview(tail);
+        tail = node;
     }
     count++;
 }
 
 template <typename T>
-void DoubleList<T>::pop_front()
+void List<T>::pop_front()
 {
-    DoubleNode<T> *temporal = first;
+    if (isEmpty())
+        return;
 
-    first = temporal->getNext();
-    first->setPreview(0);
+    NodeList<T> *temporal = head;
+
+    head = temporal->getNext();
+    if (size() > 1)
+        head->setPreview(NULL);
+    else
+        tail = head;
 
     delete temporal;
-    temporal = 0;
+    temporal = NULL;
     count--;
 }
 
 template <typename T>
-void DoubleList<T>::pop_back()
+void List<T>::pop_back()
 {
-    DoubleNode<T> *temporal = last;
+    if (isEmpty())
+        return;
 
-    last = temporal->getPreview();
-    last->setNext(0);
+    NodeList<T> *temporal = tail;
+
+    tail = temporal->getPreview();
+    if (size() > 1)
+        tail->setNext(NULL);
+    else
+        head = tail;
 
     delete temporal;
-    temporal = 0;
+    temporal = NULL;
     count--;
 }
 
 template <typename T>
-void DoubleList<T>::clear()
+void List<T>::insert(T value)
 {
-    DoubleNode<T> *temporal = first;
-
-    for (int i = 0; i < count; i++)
+    if (isEmpty())
     {
-        first = temporal->getNext();
-        delete temporal;
-        temporal = first;
+        NodeList<T> *temporal = new NodeList<T>(value);
+        head = tail = temporal;
+    }
+    else
+    {
+        if (head->getData()->compare(value) > 0)
+            push_front(value);
+        else if (tail->getData()->compare(value) < 0)
+            push_back(value);
+        else
+            insert(head->getNext(), value);
     }
 }
 
 template <typename T>
-void DoubleList<T>::graph(QString filename)
+void List<T>::erase(T value)
+{
+    NodeList<T> *temporal = removeOne(value);
+    delete temporal;
+    temporal = NULL;
+}
+
+template <typename T>
+NodeList<T> *List<T>::removeFirst()
+{
+    NodeList<T> *temporal = head;
+    head = temporal->getNext();
+    if (size() > 1)
+        head->setPreview(NULL);
+    else
+        tail = head;
+
+    return temporal;
+}
+
+template <typename T>
+NodeList<T> *List<T>::removeLast()
+{
+    NodeList<T> *temporal = tail;
+    tail = temporal->getPreview();
+    if (size() > 1)
+        tail->setNext(NULL);
+    else
+        head = tail;
+
+    return temporal;
+}
+
+template <typename T>
+NodeList<T> *List<T>::removeOne(T value)
+{
+    if (startsWith(value))
+        return removeFirst();
+    if (endsWith(value))
+        return removeLast();
+
+    if (head->getData()->compare(value) < 0
+            && tail->getData()->compare(value) > 0)
+    {
+        NodeList<T> *temporal = get(head->getNext(), value);
+
+        if (temporal->getNext() != NULL)
+            temporal->getNext()->setPreview(temporal->getPreview());
+        if (temporal->getPreview() != NULL)
+            temporal->getPreview()->setNext(temporal->getNext());
+
+        temporal->setNext(NULL);
+        temporal->setPreview(NULL);
+
+        return temporal;
+    }
+    else
+        return NULL;
+}
+
+template <typename T>
+void List<T>::sort()
+{
+}
+
+template <typename T>
+void List<T>::reverse()
+{
+}
+
+template <typename T>
+void List<T>::graph(QString filename)
 {
     QFile file(filename + ".dot");
 
     if (file.open(QFile::WriteOnly | QFile::Text))
     {
-        DoubleNode<T> *temporal = first;
+        NodeList<T> *temporal = head;
         QTextStream out(&file);
+
         out << "digraph " + filename + " {\n";
         out << "\trankdir = LR;\n";
-        //out << "\tnode [shape = \"box\"]\n";
+        out << "\tnode [shape = record]\n";
         flush(out);
 
         while (temporal != NULL)
-        {
-            out << "\t" << temporal->getNameNode();
-            out << " [label = \"" << temporal->getTextNode() << "\"];\n";
-            flush(out);
-
-            if (temporal->getPreview() != NULL)
             {
                 out << "\t" << temporal->getNameNode();
-                out << " -> " << temporal->getPreview()->getNameNode() << ";\n";
+                out << " [label = \"" << temporal->getTextNode() << "\"];\n";
                 flush(out);
-            }
 
-            if (temporal->getNext() != NULL)
-            {
-                out << "\t" << temporal->getNameNode();
-                out << " -> " << temporal->getNext()->getNameNode() << ";\n";
-                flush(out);
-            }
+                if (temporal->getPreview() != NULL)
+                {
+                    out << "\t" << temporal->getNameNode();
+                    out << " -> " << temporal->getPreview()->getNameNode() << ";\n";
+                    flush(out);
+                }
 
-            temporal = temporal->getNext();
+                if (temporal->getNext() != NULL)
+                {
+                    out << "\t" << temporal->getNameNode();
+                    out << " -> " << temporal->getNext()->getNameNode() << ";\n";
+                    flush(out);
+                }
+
+                temporal = temporal->getNext();
         }
+
         out << "}";
         flush(out);
 
@@ -169,4 +405,12 @@ void DoubleList<T>::graph(QString filename)
         cmd.append("-o " + filename + ".png");
         system(cmd.toLatin1().data());
     }
+}
+
+template <typename T>
+List<T> List<T>::operator<<(T value)
+{
+    push_back(value);
+
+    return this;
 }
